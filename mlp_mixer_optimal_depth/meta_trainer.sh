@@ -5,7 +5,6 @@
 
 #SBATCH --job-name=parallel_job      # Job name
 #SBATCH --mail-type=END,FAIL         # Mail events (NONE, BEGIN, END, FAIL, ALL)
-#SBATCH --mail-user=dan.nav@mail.huji.ac.il    # Where to send mail
 #SBATCH --nodes=1                    # Run all processes on a single node
 #SBATCH --time=10:00:00              # Time limit hrs:min:sec
 #SBATCH --output=parallel_%j.log     # Standard output and error log

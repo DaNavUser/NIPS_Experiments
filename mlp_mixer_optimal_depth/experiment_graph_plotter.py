@@ -55,16 +55,34 @@ def graph_plotter(results_dct):
     for budget_ in ratios_obj.budgets:
         plt.legend(loc='upper left')
         fig, ax = plt.subplots()
+        all_accs = []
+        ratios_ = None
         for budget_seed, (ratios, accs) in budget_graphs_lists_2.items():
             budget, seed = int(budget_seed.split('_')[0]), budget_seed.split('_')[1]
             if budget != budget_:
                 continue
-            ax.plot(ratios[1:], accs[1:], color=colors[color_cnt % len(colors)], label=f"{int(budget // 10 ** 3)}K")
-            ax.set_xscale('log')
-            ax.set_xticks([1 / k for k in range(1, 6)] + [k for k in range(1, 10)])
-            ax.set_xticklabels([f'1/{k}' for k in range(1, 6)] + [f'{k}' for k in range(1, 10)])
+            if len(all_accs) > 0:
+                all_accs = [acc_1 + [acc_2, ] for acc_1, acc_2 in zip(all_accs, accs)]
+            else:
+                all_accs = [[acc] for acc in accs]
+                ratios_ = ratios
+        avg_accs = [np.mean(acc) for acc in all_accs]
+        max_deviation = [np.max(np.array(acc) - np.mean(acc)) for acc in all_accs]
+        # ax.plot(ratios[1:], accs[1:], color=colors[color_cnt % len(colors)], label=f"{int(budget // 10 ** 3)}K")
+        plt.errorbar(ratios_[1:], avg_accs[1:], yerr=max_deviation[1:], uplims=[False, ] * len(ratios_[1:]),
+                     lolims=[False, ] * len(ratios_[1:]), color=colors[color_cnt % len(colors)],
+                     label=f"{int(budget // 10 ** 3)}K")
+        ax.set_xscale('log')
+        ax.set_xticks([1 / k for k in range(1, 6)] + [k for k in range(1, 10)])
+        ax.set_xticklabels([f'1/{k}' for k in range(1, 6)] + [f'{k}' for k in range(1, 10)])
 
-            color_cnt += 1
+        print('=' * 15)
+        print(budget_)
+        print(avg_accs)
+        print(max_deviation)
+        print('=' * 15)
+
+        color_cnt += 1
 
         plt.legend(loc='upper right', title='Budget')
         plt.xlabel(r'p / log_2 d')
@@ -87,4 +105,3 @@ def log_best_ratios(budget_graphs_lists_2):
     budget_best_ratio_2 = {budget: list(best_ratios_counter.keys())[np.argmax(best_ratios_counter.values())]
                            for budget, best_ratios_counter in budget_best_ratio.items()}
     print(budget_best_ratio_2)
-    a = 1
