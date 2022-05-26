@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="PYTHON_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/different_resnets_over_CIFAR100" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/mlp_mixer_optimal_depth" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Masking_Deterioration_Experiment____V2" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Masking_Detrioration_Experiments" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/mlp_mixer_different_sizes_and_learning_speed" isTestSource="false" />
+    </content>
+    <orderEntry type="jdk" jdkName="turandot_interpreter" jdkType="Python SDK" />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>
