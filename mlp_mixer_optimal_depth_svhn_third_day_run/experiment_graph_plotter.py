@@ -18,7 +18,7 @@ from my_utils import RatiosList
 # All on one canvas
 
 # Budget_graphs_list = {B:{p_divided_by_log_2_d: acc_after_90_epochs} for B in possible_budgets}
-def graph_plotter(results_dct):
+def graph_plotter(results_dct, epochs):
     ratios_obj = RatiosList()
     ratios_list = ratios_obj.ratios_list
     budget_graphs_list = {f'{ratio_dct["params"]}_{ratio_dct["seed"]}': {}
@@ -52,11 +52,17 @@ def graph_plotter(results_dct):
     color_cnt = 0
     colors = ['blue', 'red', 'green', 'black', 'purple', 'brown'] * ratios_obj.seeds.__len__()
 
+    fig, ax = plt.subplots(nrows=1, ncols=1)
+    labels_lst = []
+
     for budget_ in ratios_obj.budgets:
-        plt.legend(loc='upper left')
-        fig, ax = plt.subplots()
         all_accs = []
         ratios_ = None
+
+        # Still shows but - overfit issues - find harder DS
+        if budget_ >= 16000:
+            continue
+
         for budget_seed, (ratios, accs) in budget_graphs_lists_2.items():
             budget, seed = int(budget_seed.split('_')[0]), budget_seed.split('_')[1]
             if budget != budget_:
@@ -71,7 +77,11 @@ def graph_plotter(results_dct):
         # ax.plot(ratios[1:], accs[1:], color=colors[color_cnt % len(colors)], label=f"{int(budget // 10 ** 3)}K")
         plt.errorbar(ratios_[1:], avg_accs[1:], yerr=max_deviation[1:], uplims=[False, ] * len(ratios_[1:]),
                      lolims=[False, ] * len(ratios_[1:]), color=colors[color_cnt % len(colors)],
-                     label=f"{int(budget // 10 ** 3)}K")
+                     label=f"{int(budget_ // 10 ** 3)}K", capsize=6)
+
+        # plt.plot(ratios_[1:], avg_accs[1:], color=colors[color_cnt % len(colors)],
+        #          label=f"{int(budget_ // 10 ** 3)}K")
+
         ax.set_xscale('log')
         ax.set_xticks([1 / k for k in range(1, 6)] + [k for k in range(1, 10)])
         ax.set_xticklabels([f'1/{k}' for k in range(1, 6)] + [f'{k}' for k in range(1, 10)])
@@ -84,12 +94,18 @@ def graph_plotter(results_dct):
 
         color_cnt += 1
 
-        plt.legend(loc='upper right', title='Budget')
+        # ax.legend(loc='upper right', title=f'{int(budget_ // 10 ** 3)}K')
+        labels_lst.append(f"{int(budget_ // 10 ** 3)}K")
         plt.xlabel(r'p / log_2 d')
         plt.ylabel('accuracy')
-        plt.title(f'CIFAR-100 (40 epochs) - budget: {int(budget_ // 10 ** 3)}K')
-        plt.show()
-        plt.cla()
+
+    lines_labels = [ax.get_legend_handles_labels() for ax in fig.axes]
+    lines, _ = [sum(var, []) for var in zip(*lines_labels)]
+    plt.legend(lines, labels_lst, loc='upper right', title='Budget')
+
+    plt.title(f'SVHN ({epochs} epochs)')
+    plt.show()
+    plt.cla()
 
 
 def log_best_ratios(budget_graphs_lists_2):
